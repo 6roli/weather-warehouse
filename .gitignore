@@ -1,0 +1,25 @@
+# Local data lake (the real one lives in the Hugging Face bucket)
+data/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+.pytest_cache/
+
+# Databases / raw satellite or model files never go in Git
+*.duckdb
+*.duckdb.wal
+*.grib
+*.grib2
+*.nc
+
+.DS_Store
+Thumbs.db

@@ -1,0 +1,30 @@
+[project]
+name = "weather-warehouse"
+version = "0.1.0"
+description = "Hourly weather data warehouse for Spain's provincial capitals (bronze/silver/gold medallion) built on DuckDB and Parquet."
+readme = "README.md"
+requires-python = ">=3.12"
+# Exact versions so the hourly job behaves the same everywhere.
+dependencies = [
+  "duckdb==1.5.6",
+  "huggingface_hub==2.1.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1"]
+
+[project.scripts]
+weather-wh = "weather_wh.pipeline:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["weather_wh", "weather_wh.sources"]
+
+[tool.setuptools.package-data]
+weather_wh = ["sql/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

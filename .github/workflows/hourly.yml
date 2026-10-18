@@ -1,0 +1,36 @@
+# Every hour: fetch Open-Meteo forecasts and AEMET observations into bronze, rebuild
+# silver and gold for today and yesterday, and upload the changes to the Hugging Face bucket.
+# Free: GitHub Actions minutes are unlimited for public repositories.
+name: Hourly ingestion
+
+on:
+  schedule:
+    # Minute 25: AEMET has usually published the previous hour by then.
+    - cron: "25 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Never run two ingestions at once; queue instead of cancelling.
+  group: hourly-ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install .
+      - name: Run hourly pipeline
+        env:
+          AEMET_API_KEY: ${{ secrets.AEMET_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_BUCKET: ${{ vars.HF_BUCKET }}
+        run: weather-wh hourly

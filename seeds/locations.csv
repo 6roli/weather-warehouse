@@ -1,0 +1,53 @@
+location_id,name,province,latitude,longitude,elevation_m,geonames_id
+a-coruna,A Coruña,A Coruña,43.37135,-8.396,22.0,3119841
+albacete,Albacete,Albacete,38.99424,-1.85643,695.0,2522258
+alicante,Alicante,Alicante,38.34517,-0.48149,18.0,2521978
+almeria,Almería,Almería,36.83814,-2.45974,21.0,2521886
+avila,Ávila,Ávila,40.65724,-4.69951,1127.0,3129136
+badajoz,Badajoz,Badajoz,38.87789,-6.97061,192.0,2521420
+barcelona,Barcelona,Barcelona,41.38879,2.15899,15.0,3128760
+bilbao,Bilbao,Bizkaia,43.26271,-2.92528,20.0,3128026
+burgos,Burgos,Burgos,42.34106,-3.70184,863.0,3127461
+caceres,Cáceres,Cáceres,39.47649,-6.37224,441.0,2520611
+cadiz,Cádiz,Cádiz,36.52672,-6.2891,22.0,2520600
+castellon-de-la-plana,Castellón de la Plana,Castellón,39.98567,-0.04935,30.0,2519752
+ciudad-real,Ciudad Real,Ciudad Real,38.98626,-3.92907,633.0,2519402
+cordoba,Córdoba,Córdoba,37.89155,-4.77275,117.0,2519240
+cuenca,Cuenca,Cuenca,40.06667,-2.13333,941.0,3124132
+girona,Girona,Girona,41.98311,2.82493,81.0,3121456
+granada,Granada,Granada,37.18817,-3.60667,689.0,2517117
+guadalajara,Guadalajara,Guadalajara,40.62862,-3.16185,722.0,3121070
+huelva,Huelva,Huelva,37.26638,-6.94004,34.0,2516548
+huesca,Huesca,Huesca,42.13615,-0.4087,476.0,3120514
+jaen,Jaén,Jaén,37.76922,-3.79028,558.0,2516395
+leon,León,León,42.60003,-5.57032,844.0,3118532
+lleida,Lleida,Lleida,41.61674,0.62218,155.0,3118514
+logrono,Logroño,La Rioja,42.46615,-2.45115,380.0,3118150
+lugo,Lugo,Lugo,43.00992,-7.55602,465.0,3117814
+madrid,Madrid,Madrid,40.4165,-3.70256,665.0,3117735
+malaga,Málaga,Málaga,36.72016,-4.42034,22.0,2514256
+murcia,Murcia,Murcia,37.98704,-1.13004,53.0,2513416
+ourense,Ourense,Ourense,42.33669,-7.86407,146.0,3114965
+oviedo,Oviedo,Asturias,43.36029,-5.84476,237.0,3114711
+palencia,Palencia,Palencia,42.00955,-4.52406,739.0,3114531
+palma,Palma,Illes Balears,39.56939,2.65024,34.0,2512989
+las-palmas-de-gran-canaria,Las Palmas de Gran Canaria,Las Palmas,28.10178,-15.41573,122.0,2515270
+pamplona,Pamplona,Navarra,42.81687,-1.64323,460.0,3114472
+pontevedra,Pontevedra,Pontevedra,42.431,-8.64435,29.0,3113209
+salamanca,Salamanca,Salamanca,40.96882,-5.66388,815.0,3111108
+san-sebastian,San Sebastián,Gipuzkoa,43.31283,-1.97499,17.0,3110044
+santa-cruz-de-tenerife,Santa Cruz de Tenerife,Santa Cruz de Tenerife,28.46824,-16.25462,10.0,2511174
+santander,Santander,Cantabria,43.46589,-3.80493,1.0,3109718
+segovia,Segovia,Segovia,40.94808,-4.11839,996.0,3109256
+sevilla,Sevilla,Sevilla,37.38283,-5.97317,16.0,2510911
+soria,Soria,Soria,41.76401,-2.46883,1064.0,3108681
+tarragona,Tarragona,Tarragona,41.11905,1.24544,60.0,3108288
+teruel,Teruel,Teruel,40.3456,-1.10646,908.0,3108126
+toledo,Toledo,Toledo,39.8581,-4.02263,533.0,2510409
+valencia,Valencia,Valencia,39.47391,-0.37966,15.0,2509954
+valladolid,Valladolid,Valladolid,41.65541,-4.72353,702.0,3106672
+vitoria-gasteiz,Vitoria-Gasteiz,Araba/Álava,42.84998,-2.67268,547.0,3104499
+zamora,Zamora,Zamora,41.50633,-5.74456,662.0,3104342
+zaragoza,Zaragoza,Zaragoza,41.65606,-0.87734,214.0,3104324
+ceuta,Ceuta,Ceuta,35.88919,-5.32042,22.0,6362987
+melilla,Melilla,Melilla,35.29369,-2.93833,14.0,2513947
