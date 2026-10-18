@@ -24,7 +24,7 @@ build-backend = "setuptools.build_meta"
 packages = ["weather_wh", "weather_wh.sources"]
 
 [tool.setuptools.package-data]
-weather_wh = ["sql/*.sql"]
+weather_wh = ["sql/*.sql", "seeds/*.csv"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

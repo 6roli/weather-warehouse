@@ -1,14 +1,15 @@
 """The 52 provincial capitals the warehouse follows.
 
 Coordinates come from the Open-Meteo geocoding API (GeoNames data, CC BY 4.0)
-and are stored in seeds/locations.csv so every run uses exactly the same points.
+and are stored in weather_wh/seeds/locations.csv (inside the package, so it is installed
+with it) so every run uses exactly the same points.
 """
 
 import csv
 from dataclasses import dataclass
 from pathlib import Path
 
-SEED_FILE = Path(__file__).resolve().parent.parent / "seeds" / "locations.csv"
+SEED_FILE = Path(__file__).resolve().parent / "seeds" / "locations.csv"
 
 
 @dataclass(frozen=True)

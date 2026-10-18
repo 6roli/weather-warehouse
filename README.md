@@ -125,7 +125,7 @@ Copy `.env.example` to `.env` for local runs. In GitHub: *Settings → Secrets a
 |---|---|---|
 | [Open-Meteo](https://open-meteo.com) forecast API | Data CC BY 4.0. Free API for non-commercial use, < 10,000 calls/day (this project: ~1,250) | "Weather data by Open-Meteo.com" |
 | [AEMET OpenData](https://opendata.aemet.es) | Free reuse citing AEMET as the source; data provided as is | "Fuente: AEMET" |
-| Capital coordinates | Open-Meteo geocoding (GeoNames, CC BY 4.0), stored in `seeds/locations.csv` | GeoNames |
+| Capital coordinates | Open-Meteo geocoding (GeoNames, CC BY 4.0), stored in `weather_wh/seeds/locations.csv` | GeoNames |
 
 Anyone reusing data from the bucket must keep these attributions.
 

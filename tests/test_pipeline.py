@@ -147,3 +147,19 @@ def test_seed_has_52_unique_capitals():
     locations = load_locations()
     assert len(locations) == 52
     assert all(27 < l.latitude < 44 and -19 < l.longitude < 5 for l in locations)  # Spain incl. Canaries
+
+
+def test_package_ships_its_data_files():
+    """Regression: the seed lived outside the package, so `pip install .` (as in GitHub Actions) lost it."""
+    import tomllib
+    from pathlib import Path
+
+    import weather_wh
+    from weather_wh.locations import SEED_FILE
+    from weather_wh.transform import SQL_DIR
+
+    package_dir = Path(weather_wh.__file__).resolve().parent
+    assert SEED_FILE.is_relative_to(package_dir) and SQL_DIR.is_relative_to(package_dir)
+    config = tomllib.loads((package_dir.parent / "pyproject.toml").read_text(encoding="utf-8"))
+    shipped = config["tool"]["setuptools"]["package-data"]["weather_wh"]
+    assert "seeds/*.csv" in shipped and "sql/*.sql" in shipped

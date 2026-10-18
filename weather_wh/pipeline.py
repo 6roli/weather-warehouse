@@ -79,9 +79,14 @@ def run_hourly(settings: Settings, now: datetime | None = None) -> int:
     bronze, failed = fetch(settings, lake, now)
     if remote:
         remote.push(lake, bronze)  # raw data first: it is the part that cannot be recreated
-    outputs = rebuild(lake, days, today)
+    # Upload each layer as soon as it is built, so a failure in gold never loses silver.
+    connection = connect()
+    silver = build_silver(connection, lake, days)
     if remote:
-        remote.push(lake, outputs)
+        remote.push(lake, silver)
+    gold = build_gold(connection, lake, days, today)
+    if remote:
+        remote.push(lake, gold)
 
     sources = 1 + bool(settings.aemet_api_key)
     if len(failed) == sources:
