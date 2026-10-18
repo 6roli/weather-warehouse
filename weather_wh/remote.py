@@ -4,7 +4,7 @@ The GitHub Actions runner starts empty every hour, so each run downloads only th
 partitions it needs (a few days), rebuilds them and uploads the changed files.
 Anyone can then read the data, e.g. in DuckDB:
 
-    SELECT * FROM 'hf://buckets/6roli/weather-warehouse/gold/latest_forecast/data.parquet';
+    SELECT * FROM 'hf://buckets/groli/weather-warehouse/gold/latest_forecast/data.parquet';
 """
 
 import logging

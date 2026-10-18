@@ -8,7 +8,7 @@ predict the weather.
 | | |
 |---|---|
 | Data | Open-Meteo forecasts (72 h ahead) + AEMET station observations, every hour |
-| Storage | Parquet in a public Hugging Face Storage Bucket (`hf://buckets/6roli/weather-warehouse`) |
+| Storage | Parquet in a public Hugging Face Storage Bucket (`hf://buckets/groli/weather-warehouse`) |
 | Engine | DuckDB (SQL files, one per table) |
 | Schedule | GitHub Actions, every hour at minute 25 |
 | Cost | €0 |
@@ -81,7 +81,7 @@ import duckdb
 
 duckdb.sql("""
     SELECT location_name, valid_at, temperature_c, precipitation_mm
-    FROM 'hf://buckets/6roli/weather-warehouse/gold/latest_forecast/data.parquet'
+    FROM 'hf://buckets/groli/weather-warehouse/gold/latest_forecast/data.parquet'
     WHERE location_id = 'madrid'
 """).show()
 ```
@@ -117,7 +117,7 @@ Copy `.env.example` to `.env` for local runs. In GitHub: *Settings → Secrets a
 |---|---|---|
 | `AEMET_API_KEY` | Secret | AEMET OpenData key (free, by e-mail at https://opendata.aemet.es/centrodedescargas/altaUsuario). Without it, only forecasts are collected |
 | `HF_TOKEN` | Secret | Hugging Face token with write access to the bucket |
-| `HF_BUCKET` | Variable | e.g. `6roli/weather-warehouse` |
+| `HF_BUCKET` | Variable | `groli/weather-warehouse` |
 
 ## Sources and licences
 
