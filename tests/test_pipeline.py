@@ -5,6 +5,7 @@ The AEMET records use the field names of the AEMET OpenData documentation
 with made-up station ids and values.
 """
 
+import json
 from datetime import date, datetime, timezone
 
 import duckdb
@@ -18,6 +19,7 @@ from weather_wh.pipeline import status_report
 from weather_wh.sources import aemet, open_meteo
 from weather_wh.sources.http import redact
 from weather_wh.transform import connect, render
+from weather_wh.web import build_web_snapshot
 
 DAY = date(2026, 10, 18)
 
@@ -163,3 +165,33 @@ def test_package_ships_its_data_files():
     config = tomllib.loads((package_dir.parent / "pyproject.toml").read_text(encoding="utf-8"))
     shipped = config["tool"]["setuptools"]["package-data"]["weather_wh"]
     assert "seeds/*.csv" in shipped and "sql/*.sql" in shipped
+
+
+def test_web_snapshot_summarises_gold_for_browsers(lake):
+    write_forecast(lake, utc(10), madrid=[9, 10, 11, 12], sevilla=[20, 21, 22, 23])
+    stations = [observation("NEAR", 12, 10.0), observation("NEAR", 13, 13.0)]
+    write_bronze(lake.root, BronzeRecord(aemet.SOURCE, utc(14), "x", stations))
+    connection = connect()
+    build_silver(connection, lake, [DAY])
+    build_gold(connection, lake, [DAY], today=DAY)
+
+    path = build_web_snapshot(connection, lake, utc(11, 40))
+    snapshot = json.loads(path.read_text(encoding="utf-8"))
+
+    assert lake.relative(path) == "gold/web/snapshot.json"
+    assert snapshot["forecast_issued_at"] == "2026-10-18T10:00:00Z"
+    madrid, sevilla = snapshot["capitals"]  # sorted by name
+    assert madrid["name"] == "Madrid"
+    assert madrid["temperature_c"] == 10.0  # forecast for the current hour (11:00)
+    assert madrid["next_24h_temperature_c"] == [10.0, 11.0, 12.0]
+    assert madrid["observed"] == {"temperature_c": 13.0, "observed_at": "2026-10-18T13:00:00Z", "station": "Station NEAR"}
+    assert sevilla["observed"] is None
+    assert snapshot["skill"]["temperature_mae_c"]["lead_1_6h"] == 1.0
+
+
+def test_empty_silver_partitions_are_not_kept(lake):
+    # A download at 00:05 on the 19th only has observations of the 18th: no file for the 19th.
+    write_bronze(lake.root, BronzeRecord(aemet.SOURCE, utc(0, day=19), "x", [observation("NEAR", 23, 10.0)]))
+    written = build_silver(connect(), lake, [date(2026, 10, 19)])
+    assert not lake.silver_observations(date(2026, 10, 19)).exists()
+    assert all("observations_hourly" not in lake.relative(path) for path in written)

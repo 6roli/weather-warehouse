@@ -8,9 +8,9 @@ predict the weather.
 | | |
 |---|---|
 | Data | Open-Meteo forecasts (72 h ahead) + AEMET station observations, every hour |
-| Storage | Parquet in a public Hugging Face Storage Bucket (`hf://buckets/groli/weather-warehouse`) |
+| Storage | Parquet in a public Hugging Face Storage Bucket (`groli/weather-warehouse`) |
 | Engine | DuckDB (SQL files, one per table) |
-| Schedule | GitHub Actions, every hour at minute 25 |
+| Schedule | GitHub Actions, started every hour at minute 25 by a Cloudflare Cron Trigger |
 | Cost | €0 |
 
 ## Why hourly, and why forecasts *and* observations
@@ -76,15 +76,23 @@ Rules applied in silver: timestamps in UTC; AEMET wind converted from m/s to km/
 
 ## Reading the data
 
+Every file is public at `https://huggingface.co/buckets/groli/weather-warehouse/resolve/<path>`.
+DuckDB reads it over HTTPS (it cannot read `hf://buckets/...` paths yet):
+
 ```python
 import duckdb
 
-duckdb.sql("""
+BUCKET = "https://huggingface.co/buckets/groli/weather-warehouse/resolve"
+duckdb.sql(f"""
     SELECT location_name, valid_at, temperature_c, precipitation_mm
-    FROM 'hf://buckets/groli/weather-warehouse/gold/latest_forecast/data.parquet'
+    FROM '{BUCKET}/gold/latest_forecast/data.parquet'
     WHERE location_id = 'madrid'
 """).show()
 ```
+
+For websites, every run also writes `gold/web/snapshot.json` (~30 kB): per capital, the forecast for the current
+hour and the next 24 h, the latest observation at the linked AEMET station, and yesterday's forecast error. It can
+be fetched from any page (the bucket allows cross-origin requests). The portfolio's project page uses it.
 
 ## Run locally (VS Code)
 
@@ -119,6 +127,25 @@ Copy `.env.example` to `.env` for local runs. In GitHub: *Settings → Secrets a
 | `HF_TOKEN` | Secret | Hugging Face token with write access to the bucket |
 | `HF_BUCKET` | Variable | `groli/weather-warehouse` |
 
+## Hourly trigger (Cloudflare Worker)
+
+GitHub's scheduler is best effort: on the first day it started only 4 of ~17 hourly runs. The Worker in
+[`trigger/`](trigger/) uses a Cloudflare Cron Trigger (on time, free) to start `hourly.yml` through the GitHub API
+at minute 25 of every hour. GitHub's own schedule stays as a fallback; extra runs are harmless because every
+step is idempotent.
+
+One-time setup:
+
+1. GitHub → *Settings → Developer settings → Fine-grained tokens → Generate new token*: name
+   `weather-warehouse-trigger`, repository access **only `6roli/weather-warehouse`**, permission
+   **Actions: Read and write**, expiry up to one year (note the date to renew it).
+2. Cloudflare → *Workers & Pages → Create → Import a repository* → `weather-warehouse`, project name
+   `weather-warehouse-trigger`, **root directory `trigger`**, default commands. Deploy.
+3. In the new Worker → *Settings → Variables and Secrets → Add* → type **Secret**, name `GITHUB_TOKEN`, value: the
+   token. Deploy again if asked.
+4. Check: *Worker → Logs* shows `Dispatched hourly.yml on main` at minute 25, and GitHub → *Actions* shows runs
+   triggered by `workflow_dispatch`.
+
 ## Sources and licences
 
 | Source | Licence and conditions | Attribution |
@@ -134,6 +161,7 @@ Anyone reusing data from the bucket must keep these attributions.
 | Item | Plan | Cost |
 |---|---|---|
 | Scheduling | GitHub Actions, public repository | €0 (unlimited minutes) |
+| Trigger | Cloudflare Workers free plan, one Cron Trigger (~720 runs/month) | €0 |
 | Storage | Hugging Face Storage Bucket, public | €0 (free public storage; a few GB per year expected) |
 | APIs | Open-Meteo (free non-commercial), AEMET OpenData | €0 |
 
@@ -148,13 +176,14 @@ GitHub disables scheduled workflows in public repositories after 60 days without
   whole city (altitude, coast, urban heat).
 - The AEMET field mapping follows the AEMET OpenData documentation and is validated with synthetic tests;
   it will be checked against the first real downloads once the API key is configured.
-- GitHub's scheduler can start runs late or skip some during busy periods; gaps are visible as missing hours.
+- If both the Cloudflare trigger and GitHub's scheduler fail, the forecast issued in that hour is lost (gaps are
+  visible as missing `issued_at` hours). Observations are not lost: each AEMET download covers the last 24 h.
 
 ## Roadmap
 
-1. Connect AEMET and the Hugging Face bucket (keys pending).
+1. ~~Connect AEMET and the Hugging Face bucket.~~ Done.
 2. Backfill several years of hourly reanalysis (ERA5 via Open-Meteo Historical API) for model training.
-3. A small dashboard on the portfolio reading the gold tables.
+3. ~~A small dashboard on the portfolio reading the gold tables~~ — first version reads `gold/web/snapshot.json`.
 4. A separate app with ML/DL models (e.g. gradient boosting, then sequence models) trained on `training_features`,
    evaluated against the Open-Meteo baseline in `forecast_vs_observed`.
 5. Optionally move the SQL models to dbt once the number of tables grows.

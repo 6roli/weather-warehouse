@@ -9,6 +9,7 @@
     gold/training_features/date=YYYY-MM-DD/data.parquet
     gold/daily_summary/date=YYYY-MM-DD/data.parquet
     gold/latest_forecast/data.parquet
+    gold/web/snapshot.json                     small JSON for websites (see web.py)
 
 Partitioning by day keeps every hourly run small: it only rewrites today's and
 yesterday's files, and readers can select the days they need.
@@ -48,6 +49,9 @@ class Lake:
 
     def gold_latest_forecast(self) -> Path:
         return self.root / "gold" / "latest_forecast" / "data.parquet"
+
+    def gold_web_snapshot(self) -> Path:
+        return self.root / "gold" / "web" / "snapshot.json"
 
     def relative(self, path: Path) -> str:
         return path.relative_to(self.root).as_posix()

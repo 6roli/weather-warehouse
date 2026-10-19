@@ -20,6 +20,7 @@ from .locations import load_locations
 from .remote import Remote
 from .sources import aemet, open_meteo
 from .transform import connect
+from .web import build_web_snapshot
 
 log = logging.getLogger("weather_wh")
 
@@ -85,8 +86,9 @@ def run_hourly(settings: Settings, now: datetime | None = None) -> int:
     if remote:
         remote.push(lake, silver)
     gold = build_gold(connection, lake, days, today)
+    snapshot = build_web_snapshot(connection, lake, now)
     if remote:
-        remote.push(lake, gold)
+        remote.push(lake, gold + ([snapshot] if snapshot else []))
 
     sources = 1 + bool(settings.aemet_api_key)
     if len(failed) == sources:
@@ -101,6 +103,8 @@ def run_rebuild(settings: Settings, days_back: int) -> int:
     days = [today - timedelta(days=offset) for offset in range(days_back - 1, -1, -1)]
     _pull_inputs(remote, lake, days)
     outputs = rebuild(lake, days, today)
+    snapshot = build_web_snapshot(connect(), lake, datetime.now(timezone.utc))
+    outputs += [snapshot] if snapshot else []
     if remote:
         remote.push(lake, outputs)
     return 0
