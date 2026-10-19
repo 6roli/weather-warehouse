@@ -140,7 +140,7 @@ One-time setup:
    `weather-warehouse-trigger`, repository access **only `6roli/weather-warehouse`**, permission
    **Actions: Read and write**, expiry up to one year (note the date to renew it).
 2. Cloudflare → *Workers & Pages → Create → Import a repository* → `weather-warehouse`, project name
-   `weather-warehouse-trigger`, default settings (empty root directory, default commands). Deploy. The Worker's
+   `weather-warehouse` (must match `name` in `wrangler.jsonc`), default settings (empty root directory, default commands). Deploy. The Worker's
    settings are in `wrangler.jsonc` at the repository root; its code is in `trigger/src/index.js`.
 3. In the new Worker → *Settings → Variables and Secrets → Add* → type **Secret**, name `GITHUB_TOKEN`, value: the
    token. Deploy again if asked.

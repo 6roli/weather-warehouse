@@ -3,7 +3,7 @@
 // keep the root directory empty and the default commands. The Python package is not part of the Worker.
 {
   "$schema": "https://unpkg.com/wrangler@4.151.2/config-schema.json",
-  "name": "weather-warehouse-trigger",
+  "name": "weather-warehouse",
   "main": "trigger/src/index.js",
   "compatibility_date": "2026-10-19",
   "triggers": {
