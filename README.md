@@ -130,7 +130,7 @@ Copy `.env.example` to `.env` for local runs. In GitHub: *Settings → Secrets a
 ## Hourly trigger (Cloudflare Worker)
 
 GitHub's scheduler is best effort: on the first day it started only 4 of ~17 hourly runs. The Worker in
-[`trigger/`](trigger/) uses a Cloudflare Cron Trigger (on time, free) to start `hourly.yml` through the GitHub API
+[`trigger/`](trigger/) (configured by the root `wrangler.jsonc`) uses a Cloudflare Cron Trigger (on time, free) to start `hourly.yml` through the GitHub API
 at minute 25 of every hour. GitHub's own schedule stays as a fallback; extra runs are harmless because every
 step is idempotent.
 
@@ -140,7 +140,8 @@ One-time setup:
    `weather-warehouse-trigger`, repository access **only `6roli/weather-warehouse`**, permission
    **Actions: Read and write**, expiry up to one year (note the date to renew it).
 2. Cloudflare → *Workers & Pages → Create → Import a repository* → `weather-warehouse`, project name
-   `weather-warehouse-trigger`, **root directory `trigger`**, default commands. Deploy.
+   `weather-warehouse-trigger`, default settings (empty root directory, default commands). Deploy. The Worker's
+   settings are in `wrangler.jsonc` at the repository root; its code is in `trigger/src/index.js`.
 3. In the new Worker → *Settings → Variables and Secrets → Add* → type **Secret**, name `GITHUB_TOKEN`, value: the
    token. Deploy again if asked.
 4. Check: *Worker → Logs* shows `Dispatched hourly.yml on main` at minute 25, and GitHub → *Actions* shows runs
