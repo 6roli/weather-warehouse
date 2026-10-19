@@ -1,0 +1,19 @@
+// Cloudflare Worker that starts the hourly ingestion on time (see src/index.js).
+// Deploy from this folder: Cloudflare dashboard → Import repository → root directory "trigger".
+{
+  "$schema": "https://unpkg.com/wrangler@4.151.2/config-schema.json",
+  "name": "weather-warehouse-trigger",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-19",
+  "triggers": {
+    // Minute 25 of every hour, UTC — AEMET has usually published the previous hour by then.
+    "crons": ["25 * * * *"]
+  },
+  "vars": {
+    "REPO": "6roli/weather-warehouse",
+    "WORKFLOW": "hourly.yml",
+    "REF": "main"
+  },
+  "observability": { "enabled": true },
+  "previews": {}
+}

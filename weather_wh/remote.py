@@ -2,9 +2,9 @@
 
 The GitHub Actions runner starts empty every hour, so each run downloads only the
 partitions it needs (a few days), rebuilds them and uploads the changed files.
-Anyone can then read the data, e.g. in DuckDB:
+Anyone can then read the data over HTTPS, e.g. in DuckDB:
 
-    SELECT * FROM 'hf://buckets/groli/weather-warehouse/gold/latest_forecast/data.parquet';
+    SELECT * FROM 'https://huggingface.co/buckets/groli/weather-warehouse/resolve/gold/latest_forecast/data.parquet';
 """
 
 import logging

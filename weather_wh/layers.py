@@ -22,6 +22,14 @@ def _locations_file() -> str:
     return "'" + SEED_FILE.resolve().as_posix().replace("'", "''") + "'"
 
 
+def _keep_if_not_empty(output: Path, rows: int, written: list[Path]) -> None:
+    """An empty partition (e.g. the day before the first download) is deleted, not published."""
+    if rows:
+        written.append(output)
+    else:
+        output.unlink(missing_ok=True)
+
+
 def build_silver(connection: duckdb.DuckDBPyConnection, lake: Lake, days: list[date]) -> list[Path]:
     written: list[Path] = []
     for day in days:
@@ -30,7 +38,7 @@ def build_silver(connection: duckdb.DuckDBPyConnection, lake: Lake, days: list[d
             output = lake.silver_forecasts(day)
             rows = run_to_parquet(connection, "silver_forecasts", output, bronze_files=sql_list(forecast_bronze))
             log.info("silver forecasts %s: %d rows", day, rows)
-            written.append(output)
+            _keep_if_not_empty(output, rows, written)
 
         # Observations of a day can arrive in downloads made that day or the next (24 h window).
         observation_bronze = lake.bronze_files(aemet.SOURCE, [day, day + timedelta(days=1)])
@@ -40,7 +48,7 @@ def build_silver(connection: duckdb.DuckDBPyConnection, lake: Lake, days: list[d
                 connection, "silver_observations", output, bronze_files=sql_list(observation_bronze), date=day.isoformat()
             )
             log.info("silver observations %s: %d rows", day, rows)
-            written.append(output)
+            _keep_if_not_empty(output, rows, written)
 
     # Station list from the most recent AEMET downloads.
     latest_days = sorted(set(days))[-2:]
